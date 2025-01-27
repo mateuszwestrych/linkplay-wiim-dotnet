@@ -1,0 +1,9 @@
+root = true
+
+[*.cs]
+
+# Code-block preferences
+csharp_style_prefer_primary_constructors = false
+
+# Rider-specific
+resharper_convert_to_primary_constructor_highlighting = none
