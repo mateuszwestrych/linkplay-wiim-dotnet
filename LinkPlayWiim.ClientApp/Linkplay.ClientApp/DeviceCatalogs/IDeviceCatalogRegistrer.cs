@@ -1,4 +1,4 @@
-namespace Linkplay.ClientApp.RestApiClient;
+namespace Linkplay.ClientApp.DeviceCatalogs;
 
 public interface IDeviceCatalogRegistrer
 {

@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Linkplay.ClientApp.RestApiClient;
@@ -11,18 +12,24 @@ public interface IRestApiClient
 
 public class RestApiClient : IRestApiClient
 {
+    private readonly ILogger<RestApiClient> _logger;
+    public const string ClientName = "LinkplayRestApiClient";
+    
     private readonly HttpClient _httpClient;
+    
+    
 
-    public RestApiClient(  IHttpClientFactory httpClientFactory)
+    public RestApiClient(IHttpClientFactory httpClientFactory, ILogger<RestApiClient> logger)
     {
-        _httpClient = httpClientFactory.CreateClient("WiimApiClient");
-        _httpClient.Timeout = TimeSpan.FromSeconds(5);
+        _logger = logger;
+        _httpClient = httpClientFactory.CreateClient(ClientName);
     }
 
     public async Task<Result> GetAsync(string url, CancellationToken cancellationToken = default)
     {
         try
         {
+            _logger.LogTrace("GET URL: {0}", url);
             var response = await _httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
             return Result.Success();
@@ -37,6 +44,7 @@ public class RestApiClient : IRestApiClient
     {
         try
         {
+            _logger.LogTrace("GET URL: {0}", url);
             var response = await _httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
         

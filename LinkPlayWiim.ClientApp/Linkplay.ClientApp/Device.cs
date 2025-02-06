@@ -21,6 +21,13 @@ public partial class Device : IConnectableDevice
     private int _knownVolume;
     private readonly int _volumeSteps = 5;
 
+    public async Task<Result> PlayUrlAsync(string url, IDeviceConnector deviceConnector, CancellationToken cancellationToken)
+    {
+        return await DevicePlayUrlCommand
+            .Create(url)
+            .Bind(async cmd => await deviceConnector.ExecuteCommand(this, cmd, cancellationToken));
+    }
+    
     public async Task<Result> VolumeUp(IDeviceConnector deviceConnector, CancellationToken cancellationToken)
     {
         var command = DeviceVolumeCommand.SetVolume(_knownVolume += _volumeSteps);

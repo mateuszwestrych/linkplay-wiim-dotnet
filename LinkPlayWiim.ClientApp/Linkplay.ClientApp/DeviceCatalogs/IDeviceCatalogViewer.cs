@@ -1,6 +1,6 @@
-namespace Linkplay.ClientApp.RestApiClient;
+namespace Linkplay.ClientApp.DeviceCatalogs;
 
 public interface IDeviceCatalogViewer
 {
-    IReadOnlyCollection<IConnectableDevice> GetDevices();
+    IReadOnlyCollection<DeviceCatalogItem> GetDevices();
 }

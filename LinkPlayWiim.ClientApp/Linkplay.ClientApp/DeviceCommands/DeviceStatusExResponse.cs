@@ -7,6 +7,6 @@ public class DeviceStatusExResponse
     [JsonProperty("deviceName")]
     public string DeviceName { get; set; }
     
-    [JsonProperty("identifier")]
+    [JsonProperty("uuid")]
     public string Identifier { get; set; }
 }

@@ -1,6 +1,6 @@
 using Linkplay.ClientApp;
+using Linkplay.ClientApp.DeviceCatalogs;
 using Linkplay.ClientApp.DeviceCommands;
-using Linkplay.ClientApp.RestApiClient;
 
 namespace Linkplay.Server.DeviceDiscovery;
 
@@ -35,14 +35,20 @@ public class DeviceNetworkDiscoveryService : IHostedService, IDisposable
         {
             var emptyShellDevice = EmptyShellDevice.BuildFromNetworkAddress(address);
 
-            var result = await _restApiClient.ExecuteCommand(
+            var statusResult = await _restApiClient.ExecuteCommand(
                 emptyShellDevice,
                 new DeviceStatusExCommand(),
                 cancellationToken);
             
-            if (result.IsSuccess)
+            if (statusResult.IsSuccess)
             {
-                _clientStorage.RegisterDevice(emptyShellDevice);
+                var deviceHandshake = await emptyShellDevice.Handshake(_restApiClient);
+                
+                if (deviceHandshake.IsSuccess)
+                    _clientStorage.RegisterDevice(deviceHandshake.Value);
+                else
+                    _clientStorage.RegisterDevice(emptyShellDevice);
+
                 await source.CancelAsync();
             }
         }
@@ -56,15 +62,15 @@ public class DeviceNetworkDiscoveryService : IHostedService, IDisposable
     {
         var ip = NetworkHelper.GetIpAddress();
         var lastDot = ip.ToString().LastIndexOf('.');
-        var baseIpAddress = ip.ToString().Substring(0, lastDot);
+        var baseNetworkIpAddress = ip.ToString().Substring(0, lastDot);
 
         //CancellationTokenSource source = new CancellationTokenSource();
         var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         var tasks = new List<Task>();
         
-        for (var i = 1; i <= 255; i++)
+        for (var i = 219; i <= 219; i++)
         {
-            var checkIp = string.Concat("https://",baseIpAddress,".",i.ToString(),"/httpapi.asp?command=getStatusEx");
+            var checkIp = string.Concat("https://", baseNetworkIpAddress, ".", i.ToString());
             
             Console.WriteLine($"Checking IP: {checkIp}");
             

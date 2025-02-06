@@ -11,7 +11,7 @@ public partial class Device
 
         return cmd.Bind<DeviceStatusExResponse, Device>(res =>
             new Device(
-                identifier: res.DeviceName,
+                identifier: res.Identifier,
                 name: res.DeviceName,
                 networkAddress: emptyShellDevice.NetworkAddress,
                 knownVolume: 0));
